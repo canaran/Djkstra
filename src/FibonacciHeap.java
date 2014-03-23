@@ -58,6 +58,9 @@ public class FibonacciHeap {
 		}
 	}
 
+	/*
+	 * Decreases the key of a node to the specified key
+	 */
 	void decreaseKey(Node n, int key) throws Exception{
 
 		if(key > n.key) { 	// if new key is greater than current key, throw an exception
@@ -114,6 +117,9 @@ public class FibonacciHeap {
 		removeMin();
 	}
 
+	/*
+	 * Extracts the minimum node of the heap according to node's key
+	 */
 	Node removeMin() {
 		Node m = min;
 		if(m != null) {
@@ -137,11 +143,17 @@ public class FibonacciHeap {
 		}
 		return m;
 	}
-	
+
+	/*
+	 * Returns the size
+	 */
 	public int getSize() {
 		return size;
 	}
-	
+
+	/*
+	 * inserts the node in to the heap
+	 */
 	public void insert(Node n) {
 		n.parent = null;
 		n.child = null;
@@ -153,38 +165,40 @@ public class FibonacciHeap {
 		if(n.key <= min.key) {
 			min = n;
 		}
-		
+
 		size++;
-		
+
 	}
-	
+
+	/*
+	 * Melds the trees in the heap according to their degrees
+	 */
 	private void meld() {
-		int degreeArrSize = ((int) Math.floor(Math.log(size)* oneOverLogPhi)) + 1;
+		int degreeArrSize = ((int) Math.floor(Math.log(size)* oneOverLogPhi)) + 1;   // Determine the degree array size using the size of the heap
 		Node degreeArr[] = new Node[degreeArrSize];
 		if(min != null) {
-			
-			for(Node n : getListofNodeInDb(min)) {
-				int ndeg = n.degree;
-				while(degreeArr[ndeg] != null) {
+
+			for(Node n : getListofNodeInDb(min)) {									// for each root node of the trees
+				int ndeg = n.degree;												// Get degree of that node
+				while(degreeArr[ndeg] != null) {									// while there is another tree with same degree, meld them
 					Node n2 = degreeArr[ndeg];
-					
+
 					if(n2.key < n.key) {
 						// swap n and n2
 						Node temp = n;
 						n = n2;
 						n2 = temp;
-					} 
-					// Remove n2 from the list and make n2 child of n
-					min = removeNodeFromDbList(min, n2);
-					link(n2, n);
-					
+					}
+					min = removeNodeFromDbList(min, n2);							// Remove n2 from the list and make n2 child of n
+					link(n2, n);													// Link n and n2 (n parent, n2 child)
+
 					degreeArr[ndeg] = null;
 					ndeg++;
 				}
-				degreeArr[ndeg] = n;
+				degreeArr[ndeg] = n; 												// Update degree
 			}
 		}
-		
+
 		// put the nodes/trees in the degree array into the list and determine min.
 		min = null;
 		for(int i=0; i<degreeArrSize; i++) {
@@ -195,18 +209,21 @@ public class FibonacciHeap {
 				}
 			}
 		}
-		
+
 	}
 
+	/*
+	 * Links two nodes
+	 */
 	private void link(Node n1, Node n2) {
 		n1.parent = n2;
 		n1.right = n1;
 		n1.left = n1;
 		n2.child = insertNodeToDbList(n2.child, n1);
-		
+
 		n1.childCut = false;
 		n2.degree++;
-		
+
 	}
 
 
