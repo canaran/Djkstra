@@ -35,13 +35,6 @@ class Vertex implements Comparable<Vertex>
 		else
 			return 1;
 	}
-
-	public boolean equals(Vertex v) {
-		if(id == v.id)
-			return true;
-		else
-			return false;
-	}
 }
 
 /*
