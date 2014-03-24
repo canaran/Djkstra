@@ -258,6 +258,10 @@ public class Djkstra {
 			int v_size = Integer.parseInt(args[1]);
 			double density = Double.parseDouble(args[2]);
 			int source_id = Integer.parseInt(args[3]);
+			if(source_id >= v_size || source_id < 0) {
+				System.out.println("Source should be in the range of 0 and " + v_size);
+				System.exit(0);
+			}
 			int edge_num;
 			do{
 				vertices.clear();
@@ -291,15 +295,12 @@ public class Djkstra {
 					}
 				} else {
 					System.out.println("Connected graph cannot be formed with this density!");
-					break;
+					System.exit(0);
 				}
 			} while (!isConnected(vertices.get(source_id), v_size));
 
-			System.out.println("Edge number: " + edge_num);
 			Graph g = new Graph(vertices, edges);
 			long startTime = System.currentTimeMillis();
-
-
 			executeArray(vertices.get(source_id));
 			long endTime   = System.currentTimeMillis();
 			long totalTime = (endTime - startTime);
@@ -308,7 +309,6 @@ public class Djkstra {
 			executeFHeap(g, vertices.get(source_id));
 			endTime   = System.currentTimeMillis();
 			long totalTime_fheap = (endTime - startTime);
-			System.out.println(totalTime);
 			for(int i=0; i<vertices.size(); i++) {
 				System.out.println(vertices.get(i).distFromSource+" //cost from node " + source_id +" to "+ vertices.get(i).getId());
 			}
