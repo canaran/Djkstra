@@ -17,7 +17,7 @@ import java.util.Map;
 
 class Vertex implements Comparable<Vertex>
 {
-	public int id;
+	private int id;
 	public ArrayList<Edge> neighbors; 					// neighbor list (edge)
 	public int distFromSource = Integer.MAX_VALUE; 		// distance from source
 	public Vertex(int id) {
@@ -185,11 +185,11 @@ public class Djkstra {
 		while(unvisited.size() != 0) {
 			Vertex v = unvisited.get(0);
 			unvisited.remove(0);
-			arr[v.id] = true;
+			arr[v.getId()] = true;
 			for(Edge e : v.neighbors) {
 				Vertex d = e.destination;
-				if(!arr[d.id]) {
-					arr[d.id] = true;
+				if(!arr[d.getId()]) {
+					arr[d.getId()] = true;
 					unvisited.add(d);
 				}
 

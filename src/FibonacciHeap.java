@@ -43,7 +43,7 @@ public class FibonacciHeap {
 		}
 	}
 
-	// inserts a node from
+	// inserts a node to the doubly linked list
 	private Node insertNodeToDbList(Node list, Node n) {
 		if(list == null) {
 			n.right = n;
