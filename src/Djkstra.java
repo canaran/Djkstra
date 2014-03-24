@@ -54,14 +54,20 @@ class Edge
 }
 
 class Graph {
-	ArrayList<Vertex> vertices;
-	ArrayList<Edge> edges;
+	private ArrayList<Vertex> vertices;
+	private ArrayList<Edge> edges;
 
+	/*
+	 * Constructs an empty graph
+	 */
 	Graph() {
 		vertices = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
 	}
 
+	/*
+	 * Constructs a graph with specified vertices and edges.
+	 */
 	Graph(ArrayList<Vertex> v, ArrayList<Edge> e) {
 		vertices = new ArrayList<Vertex>();
 		edges = new ArrayList<Edge>();
@@ -69,22 +75,34 @@ class Graph {
 		setEdges(e);
 	}
 
+	/*
+	 * Sets the vertices of the graph.
+	 */
 	private void setVertices(ArrayList<Vertex> a) {
 		for(int i=0; i<a.size(); i++) {
 			vertices.add(a.get(i));
 		}
 	}
 
+	/*
+	 * Sets the edges of the graph.
+	 */
 	private void setEdges(ArrayList<Edge> a) {
 		for(int i=0; i<a.size(); i++) {
 			edges.add(a.get(i));
 		}
 	}
 
+	/*
+	 * Returns the vertices of the graph.
+	 */
 	ArrayList<Vertex> getVertices() {
 		return vertices;
 	}
 
+	/*
+	 * Returns the edges of the graph.
+	 */
 	ArrayList<Edge> getEdges() {
 		return edges;
 	}
