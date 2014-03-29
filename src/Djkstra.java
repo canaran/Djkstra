@@ -241,7 +241,7 @@ public class Djkstra {
 		 * Gets graph information from a file and executes the Djkstra Algorithm using simple array.
 		 */
 		if(args[0].compareTo("-s") == 0) {
-			System.out.println("Running Djkstra Algorithm using simple array");
+			//System.out.println("Running Djkstra Algorithm using simple array");
 			BufferedReader reader = new BufferedReader(new FileReader(args[1]));
 			String line = null;
 			int source_id = Integer.parseInt(reader.readLine());
@@ -257,13 +257,14 @@ public class Djkstra {
 				line = reader.readLine();
 				s = line.split(" ");
 				Edge e = new Edge(vertices.get(Integer.parseInt(s[1])), Integer.parseInt(s[2]));
+				Edge e2 = new Edge(vertices.get(Integer.parseInt(s[0])), Integer.parseInt(s[2]));
 				vertices.get(Integer.parseInt(s[0])).neighbors.add(e);
-				edges.add(e);
+				vertices.get(Integer.parseInt(s[1])).neighbors.add(e2);
 			}
 			Graph g = new Graph(vertices, edges);
 			executeArray(vertices.get(source_id));
 			for(int i=0; i<vertices.size(); i++) {
-				System.out.println(vertices.get(i).distFromSource+" //cost from node " + source_id +" to "+ vertices.get(i).getId());
+				System.out.println(vertices.get(i).distFromSource);
 			}
 
 		}
@@ -272,7 +273,7 @@ public class Djkstra {
 		 * Gets graph information from a file and executes the Djkstra Algorithm using fibonacci heap.
 		 */
 		else if (args[0].compareTo("-f") == 0) {
-			System.out.println("Running Djkstra Algorithm using fibonnacci heap");
+			//System.out.println("Running Djkstra Algorithm using fibonnacci heap");
 			BufferedReader reader = new BufferedReader(new FileReader(args[1]));
 			String line = null;
 			int source_id = Integer.parseInt(reader.readLine());
@@ -288,13 +289,15 @@ public class Djkstra {
 				line = reader.readLine();
 				s = line.split(" ");
 				Edge e = new Edge(vertices.get(Integer.parseInt(s[1])), Integer.parseInt(s[2]));
+				Edge e2 = new Edge(vertices.get(Integer.parseInt(s[0])), Integer.parseInt(s[2]));
 				vertices.get(Integer.parseInt(s[0])).neighbors.add(e);
+				vertices.get(Integer.parseInt(s[1])).neighbors.add(e2);
 				edges.add(e);
 			}
 			Graph g = new Graph(vertices, edges);
 			executeFHeap(g,vertices.get(source_id));
 			for(int i=0; i<vertices.size(); i++) {
-				System.out.println(vertices.get(i).distFromSource+" //cost from node " + source_id +" to "+ vertices.get(i).getId());
+				System.out.println(vertices.get(i).distFromSource);
 			}
 		}
 		/*
@@ -339,6 +342,8 @@ public class Djkstra {
 						map.get(source)[dest] = true;
 						int weight = ((int)(Math.random()*1000))+1;
 						Edge e = new Edge(vertices.get(dest),weight);
+						Edge e2 = new Edge(vertices.get(source), weight);
+						vertices.get(dest).neighbors.add(e2);
 						vertices.get(source).neighbors.add(e);
 						edges.add(e);
 					}
@@ -367,7 +372,7 @@ public class Djkstra {
 
 
 		} else {
-				System.out.println("Error in syntax");
+			System.out.println("Error in syntax");
 		}
 	}
 
