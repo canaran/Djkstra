@@ -1,4 +1,6 @@
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class FibonacciHeap {
@@ -23,12 +25,35 @@ public class FibonacciHeap {
 	private ArrayList<Node> getListofNodeInDb (Node list) {
 		ArrayList<Node> l = new ArrayList<Node>();
 		Node next = list.right;
+		//System.out.println(next.left.v.getId());
+		//System.out.println(next.right.v.getId());
+		//System.out.println(list.v.getId() + " " + list.left.v.getId() );
 		l.add(list);
+		//73 247
 		while(next!=list) {
+			//System.out.println(next.v.getId() + " vs " + list.v.getId());
 			l.add(next);
 			next = next.right;
 		}
 		return l;
+		/*Node next = list.right;
+		int res = 1;
+		while(next.v.getId()!=list.v.getId()) {
+			next = next.right;
+			res++;
+		}
+		System.out.println("size of the list"+res);
+		System.out.println("can");
+		Node[] l = new Node[res];
+		l[0] = next;
+		next = list.right;
+		int i = 1;
+		while(next.v.getId()!=list.v.getId()) {
+			l[i] = next;
+			next = next.right;
+			i++;
+		}
+		return l;*/
 	}
 
 	// remove a node from doubly linked list
@@ -39,7 +64,7 @@ public class FibonacciHeap {
 		} else {
 			n.right.left = n.left;
 			n.left.right = n.right;
-			return list;
+			return n.right;
 		}
 	}
 
@@ -50,10 +75,11 @@ public class FibonacciHeap {
 			n.left = n;
 			return n;
 		} else {
-			n.right = list.right;
 			n.left = list;
-			list.right.left = n;
+			n.right = list.right;
 			list.right = n;
+			n.right.left = n;
+
 			return list;
 		}
 	}
@@ -68,9 +94,9 @@ public class FibonacciHeap {
 		} else {
 			n.key = key;
 			//check if n has a parent (not a root node) and if new key is less than its parent's key
-			if((n.parent != null) && (n.key < n.parent.key)) {
-				Node z = n.parent;
-				separate(n, n.parent);
+			Node z = n.parent;
+			if((z != null) && (n.key < z.key)) {
+				separate(n, z);
 				cascadingCut(z);
 			}
 
@@ -86,10 +112,11 @@ public class FibonacciHeap {
 	 * n from its parent and make a recursive call with its parent. if childCut is false, update it
 	 */
 	private void cascadingCut(Node n) {
-		if(n.parent != null) {
+		Node z = n.parent;
+		if(z != null) {
 			if(n.childCut) {
-				separate(n, n.parent);
-				cascadingCut(n.parent);
+				separate(n, z);
+				cascadingCut(z);
 			} else {
 				n.childCut = true;
 			}
@@ -101,9 +128,13 @@ public class FibonacciHeap {
 	 * n2 is the parent of n1
 	 */
 	private void separate(Node n1, Node n2) {
+		
 		n2.child = removeNodeFromDbList(n2.child, n1);
 		n2.degree--;
-
+		
+		if(n2.degree == 0) 
+			n2.child = null;
+		
 		min = insertNodeToDbList(min, n1);
 		n1.parent = null;
 		n1.childCut = false;
@@ -121,21 +152,35 @@ public class FibonacciHeap {
 	 * Extracts the minimum node of the heap according to node's key
 	 */
 	Node removeMin() {
+		//System.out.println("in remove min");
+		//System.out.println(min.key);
+		//System.out.println(min.v.getId());
 		Node m = min;
+		//System.out.println("min: " + m.v.getId());
 		if(m != null) {
+			//System.out.println("m is not null");
 			if(m.child != null) {
-				for(Node n : getListofNodeInDb(m.child)) {
+				//System.out.println("m.child is not null");
+				ArrayList<Node> arr =getListofNodeInDb(m.child);
+				//System.out.println("1 finished");
+				for (Node n:arr) {
+					m.child = removeNodeFromDbList(m.child, n);
 					min = insertNodeToDbList(min, n);
 					n.parent = null;
+					//System.out.println("in r");
 				}
+				//System.out.println("out");
 			}
+			//System.out.println("done");
 
 			min = removeNodeFromDbList(min, m);
-
+			//System.out.println(min.key);
 			if(m==m.right) {
 				min = null;
 			} else {
+
 				min = m.right;
+				//System.out.println("meld");
 				meld();
 			}
 			size--;
@@ -177,25 +222,26 @@ public class FibonacciHeap {
 		int degreeArrSize = ((int) Math.floor(Math.log(size)* oneOverLogPhi)) + 1;   // Determine the degree array size using the size of the heap
 		Node degreeArr[] = new Node[degreeArrSize];
 		if(min != null) {
-
-			for(Node n : getListofNodeInDb(min)) {									// for each root node of the trees
+			ArrayList<Node> arr = getListofNodeInDb(min);
+			for(Node n : arr) {									// for each root node of the trees
 				int ndeg = n.degree;												// Get degree of that node
+				Node x = n;
 				while(degreeArr[ndeg] != null) {									// while there is another tree with same degree, meld them
 					Node n2 = degreeArr[ndeg];
 
-					if(n2.key < n.key) {
+					if(n2.key < x.key) {
 						// swap n and n2
-						Node temp = n;
-						n = n2;
+						Node temp = x;
+						x = n2;
 						n2 = temp;
 					}
-					min = removeNodeFromDbList(min, n2);							// Remove n2 from the list and make n2 child of n
-					link(n2, n);													// Link n and n2 (n parent, n2 child)
+												// Remove n2 from the list and make n2 child of n
+					link(n2, x);													// Link n and n2 (n parent, n2 child)
 
 					degreeArr[ndeg] = null;
 					ndeg++;
 				}
-				degreeArr[ndeg] = n; 												// Update degree
+				degreeArr[ndeg] = x; 												// Update degree
 			}
 		}
 
@@ -204,11 +250,12 @@ public class FibonacciHeap {
 		for(int i=0; i<degreeArrSize; i++) {
 			if(degreeArr[i] != null) {
 				min = insertNodeToDbList(min, degreeArr[i]);
-				if(degreeArr[i].key <= min.key) {
+				if(min == null || degreeArr[i].key < min.key) {
 					min = degreeArr[i];
 				}
 			}
 		}
+		//System.out.println("Meld" + min.child.v.getId() + min.child.right.v.getId() + min.child.left.v.getId());
 
 	}
 
@@ -216,6 +263,7 @@ public class FibonacciHeap {
 	 * Links two nodes
 	 */
 	private void link(Node n1, Node n2) {
+		min = removeNodeFromDbList(min, n1);
 		n1.parent = n2;
 		n1.right = n1;
 		n1.left = n1;

@@ -109,26 +109,33 @@ class Graph {
 
 }
 
-public class Djkstra {
+public class Dijkstra {
 
 	/*
 	 * Executes the Djkstra algorithm using Fibonacci Heap.
 	 */
-	public static void executeFHeap(Graph g, Vertex source) throws Exception {
+	public static void executeFHeap(ArrayList<Vertex> vertices, Vertex source) throws Exception {
 		source.distFromSource = 0;
 		FibonacciHeap unvisited = new FibonacciHeap();					// create a fibonacci heap for unvisited vertices
 		Map<Integer,Node> uMap = new HashMap<Integer,Node>();			// create a HashMap to hold the pointers to the vertices that are in the f-heap.
-		for(Vertex v:g.getVertices()) {									// put all the vertices inside the f-heap and in the hashmap.
+		boolean [] visited = new boolean[vertices.size()];
+		for(int i = 0; i<vertices.size(); i++) {
+			visited[i] = false;
+		}
+		for(Vertex v:vertices) {									// put all the vertices inside the f-heap and in the hashmap.
 			Node n = new Node(v.distFromSource, v);						// Fibonacci node has the vertex's distance from source as key and vertex itself as the object
 			unvisited.insert(n);
 			uMap.put(v.getId(), n);
 		}
 		unvisited.decreaseKey(uMap.get(source.getId()), 0);				// Decrease the key of source to 0.
 		while(unvisited.getSize() != 0) {
-			Node n = unvisited.removeMin();								// Extract the vertex, which has the minimum distance from source, from f-heap.
+			Node n = unvisited.removeMin();	 // Extract the vertex, which has the minimum distance from source, from f-heap.
+			visited[n.v.getId()] = true;
 			Vertex v = n.v;
 			int weight = n.key;
-			for(Edge e : v.neighbors) {									// for each neighbor of that vertex
+			for(Edge e : v.neighbors) {	// for each neighbor of that vertex
+				if(visited[e.destination.getId()])
+					continue;
 				Vertex d = e.destination;
 				int edge_weight = e.weight;
 				int dist = edge_weight + weight;						// Calculate and update(by decreasing keys) neighbor's distances from source if necessary
@@ -240,6 +247,7 @@ public class Djkstra {
 		 * Djkstra -s file_name
 		 * Gets graph information from a file and executes the Djkstra Algorithm using simple array.
 		 */
+
 		if(args[0].compareTo("-s") == 0) {
 			//System.out.println("Running Djkstra Algorithm using simple array");
 			BufferedReader reader = new BufferedReader(new FileReader(args[1]));
@@ -295,7 +303,7 @@ public class Djkstra {
 				edges.add(e);
 			}
 			Graph g = new Graph(vertices, edges);
-			executeFHeap(g,vertices.get(source_id));
+			executeFHeap(vertices,vertices.get(source_id));
 			for(int i=0; i<vertices.size(); i++) {
 				System.out.println(vertices.get(i).distFromSource);
 			}
@@ -360,7 +368,7 @@ public class Djkstra {
 			long totalTime = (endTime - startTime);
 
 			startTime = System.currentTimeMillis();
-			executeFHeap(g, vertices.get(source_id));
+			executeFHeap(vertices, vertices.get(source_id));
 			endTime   = System.currentTimeMillis();
 			long totalTime_fheap = (endTime - startTime);
 			for(int i=0; i<vertices.size(); i++) {

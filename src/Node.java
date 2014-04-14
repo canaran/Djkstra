@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
+
+
+
 
 
 /*
@@ -6,6 +11,7 @@
 	 * - degree, childCut for concatanate cut
 	 * - pointers for child and parent nodes
 	 */
+
 public class Node {
 		Node child;
 		Node parent;
@@ -30,5 +36,9 @@ public class Node {
 		public Node(int key, Vertex v) {
 			this.key = key;
 			this.v = v;
+			this.left = this;
+			this.right = this;
+			childCut = false;
+			
 		}
 }
